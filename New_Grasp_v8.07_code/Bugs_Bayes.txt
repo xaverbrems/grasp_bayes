@@ -1,3 +1,8 @@
 updated 
 -initialise_data_arrays.m
 -retrieve_data.m
+-get_selector_result.m
+
+not updated, left unchanged:
+get_index_result.m
+grasp_plot_image_export.m
