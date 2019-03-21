@@ -23,21 +23,23 @@ global grasp_env
 % 20 2D fit result
 % 21 2D fit result residual
 % 22,23 = SANSPOL Sample I0,I1
+% 30 - Last box mask
+% 31 - Last sector mask
 % 41,42,43 % Bayesian results
 
 %***** Worksheet Descriptions *****
-worksheet = {1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25};
-wks_name = {'Sample' 'Empty Cell' 'Blocked Beam' 'Trans Sample' 'Trans Empty Cell' 'Trans Empty Beam' 'I0 Beam Intensity' 'Masks' 'Detector Eff' 'FR Trans Check','PA 00 Sample','PA 10 Sample','PA 11 Sample','PA 01 Sample','PA 00 Background','PA 10 Background','PA 11 Background','PA 01 Background', 'I0 SANSPOL','I1 SANSPOL','2D Fit result', '2D Fit Residual','Bayes result','Bayes cumulative','Bayes weights'};
-wks_type = {1 2 3 4 5 6 8 7 99 11 12 13 14 15 16 17 18 19 22 23 20 21 41 42 43};
-wks_visibility = {1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1};
+worksheet = {1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27};
+wks_name = {'Sample' 'Empty Cell' 'Blocked Beam' 'Trans Sample' 'Trans Empty Cell' 'Trans Empty Beam' 'I0 Beam Intensity' 'Masks' 'Detector Eff' 'FR Trans Check','PA 00 Sample','PA 10 Sample','PA 11 Sample','PA 01 Sample','PA 00 Background','PA 10 Background','PA 11 Background','PA 01 Background', 'I0 SANSPOL','I1 SANSPOL','2D Fit result', '2D Fit Residual','Box Mask','Sector Mask','Bayes result','Bayes cumulative','Bayes weights'};
+wks_type = {1 2 3 4 5 6 8 7 99 11 12 13 14 15 16 17 18 19 22 23 20 21 30 31 41 42 43};
+wks_visibility = {1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1};
 n = grasp_env.worksheet.worksheets;
-wks_nmbr = {n n n n n n n n 1 n n n n n n n n n n n n n n n n};
-wks_dpth = {1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1};
+wks_nmbr = {n n n n n n n n 1 n n n n n n n n n n n n n 1 1 n n n};
+wks_dpth = {1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1};
 n = grasp_env.worksheet.depth_max;
-wks_dpthmax =     {n n n n n n n n 1 n n n n n n n n n n n 1 1 1 n n};
-wks_sum_allowed = {1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 1}; %determines whether SUM is allowed and whether depth can exist
-wks_allowed = {[1,2,3] [1,2,3] [1,2,3] [4,5,6] [4,5,6] [6] [8] [7] [99] [11] [12,13,14,15] [12,13,14,15] [12,13,14,15] [12,13,14,15] [16,12,3] [17,13,3] [18,14,3] [19,15,3] [22,23] [23,22] [20] [21] [41] [42] [43]};
-wks_last_disp = {[2, 3] [1, 3] [0, 0] [5, 0] [6, 0] [0,0] [0, 0] [0, 0] [0, 0] [0, 0] [12,0] [13,0] [14,0] [15,0] [12,3] [13,3] [14,3] [15,3] [22, 0] [23, 0] [0,0] [0,0] [0,0] [0,0] [0,0]}; %Zero means do not display selector at all
+wks_dpthmax = {n n n n n n n n 1 n n n n n n n n n n n 1 1 1 1 1 n n};
+wks_sum_allowed = {1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 1}; %determines whether SUM is allowed and whether depth can exist
+wks_allowed = {[1,2,3] [1,2,3] [1,2,3] [4,5,6] [4,5,6] [6] [8] [7] [99] [11] [12,13,14,15] [12,13,14,15] [12,13,14,15] [12,13,14,15] [16,12,3] [17,13,3] [18,14,3] [19,15,3] [22,23] [23,22] [20] [21] [30] [31] [41] [42] [43]};
+wks_last_disp = {[2, 3] [1, 3] [0, 0] [5, 0] [6, 0] [0,0] [0, 0] [0, 0] [0, 0] [0, 0] [12,0] [13,0] [14,0] [15,0] [12,3] [13,3] [14,3] [15,3] [22, 0] [23, 0] [0,0] [0,0] [0,0] [0,0] [0,0] [0,0] [0,0]}; %Zero means do not display selector at all
 
 
 %Test whether to do complete initialisation or re-initialise single worksheets
