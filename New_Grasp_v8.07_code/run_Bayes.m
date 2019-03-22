@@ -20,7 +20,7 @@ intensity_sd_multiplier =1; %scales default intensity s.d.
 nonsensefactor = 1;  %mask unmeasured points, low value is strict, 1 is no masking.
 shape = 'l'; %'l' Lorentzian, 'g' Gaussian
 norm = 'a'; %'h' or 'a' for for height or area normalised scaling factors
-inputs = {'CeCu2Si2_1.8T'} %Cell array for multiple measurments
+inputs = {'Heidi omega 175mT'} %Cell array for multiple measurments
 informative_prior = 0; %use previous posterior for prior
 pixel_prior = 0; % uses individual pixel errors for prior.
 
@@ -59,7 +59,7 @@ for i = 1:length(inputs)
     
     if reset || ~exist('A')
         clear A;        % clear previous object (needed if code changes)
-        A = Bayesian_Rock;  %create object
+        A = Bayesian_Rock_new;  %create object
         A = GetGraspData(A,input_index,1,'last');             %read in data from Grasp
         A = CalcErrors(A,'2d');             %CalcErrors(obj,errormode,consterr) create error matrices '3d' '2d' or 'const' with 
         A = InitialiseGraspOutput(A, input_index, output_index,calc_cumulative); %propagate params into output space (obj, input_index, output_index)
