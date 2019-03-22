@@ -12,6 +12,18 @@ phioffset =0;
 
     switch input
         
+  
+        
+        
+        case 'Heidi omega 175mT'
+            input_index = 2; %data location (number)
+            output_index = 2; %where to put result
+            eta0 = 0.095;  %rocking width for spot in degrees
+            spot = [37 59];  %Spot coordinates
+            sanoffset = -90;  %san misalignment
+            phioffset =0;  %phi misalignment
+            rock_type = 'san';
+        
         case 'PdBi2 10 deg. off'
             
             eta0 = 0.113   %rocking fwhm in deg
@@ -104,6 +116,7 @@ phioffset =0;
             rock_type = 'san';
             sanoffset =0.0421451;
             phioffset =0.0315147;
+            
          case 'BFAP 0.7T sanphi'
             input_index = 1;
             output_index = 1;
