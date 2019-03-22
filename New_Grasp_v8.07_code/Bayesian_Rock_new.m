@@ -1,5 +1,5 @@
-%% classdef Bayesian_Rock
-classdef Bayesian_Rock
+%% classdef Bayesian_Rock_new
+classdef Bayesian_Rock_new
     %Bayesian_Rock  - Combines SANS data to give a weighted rocking image
     %   Detailed explanation goes here
     
