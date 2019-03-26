@@ -7,8 +7,10 @@ classdef Bayesian_Rock_new
         rocking_data
         mask
         usermask
-        prior = Bayes_Rocking_Params
-        posterior = Bayes_Rocking_Params
+        %prior = Bayes_Rocking_Params
+        %posterior = Bayes_Rocking_Params
+        prior
+        posterior
         cumulative = []
         weights
         shape = 'lorentza' %'lorentza','lorentzh','gaussa','gaussh'
@@ -23,8 +25,8 @@ classdef Bayesian_Rock_new
         weights_index
         pixels
         frames
-        san = 0
-        phi = 0
+        san
+        phi
         %    sanoffset = 0
         %    phioffset = 0
         qx
