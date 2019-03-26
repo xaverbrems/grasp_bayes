@@ -3,7 +3,7 @@
 % offsets to be optimised.  Comment or condition out lines to skip this step if
 % you want.
 % Requires following .m files:
-% Bayesian_Rock.m
+% Bayesian_Rock_new.m
 % minFunc_012
 % 
 
