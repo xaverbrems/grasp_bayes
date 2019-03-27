@@ -181,7 +181,7 @@ classdef Bayesian_Rock_new
             end
             global alex_grasp_extras %used to tell grasp not to correct calculated data.
             global inst_params
-            if sum(sum(obj.rocking_data.params))==0
+            if isempty(obj.rocking_data.params);
                 error('InitGraspOutput:nodata','Please run GetGraspData first');
             end
             %             populate destination with empty input data to fill up fields.
@@ -210,6 +210,10 @@ classdef Bayesian_Rock_new
             
             %single depth
             template=retrieve_data([1 input_index 2]);
+            %store params temporary into variable
+            template_params_temp = template.params1;
+            template.params1 = cell(1);
+            template.params1{1,1} = template_params_temp;
             template.data1 = zeros(size(template.data1));
             template.n_frames = 1;
             template.file_type = 'single frame';
@@ -227,6 +231,10 @@ classdef Bayesian_Rock_new
             if calc_cumulative % intermediate data
                 for i = start_depth:step:end_depth
                     template=retrieve_data([1 input_index i+1]);
+                    %store params temporary into variable
+                    template_params_temp = template.params1;
+                    template.params1 = cell(1);
+                    template.params1{1,1} = template_params_temp;
                     for det = 1:dets
                         template.(['data' num2str(det)])=zeros(size(template.(['data' num2str(det)])));
                     end
