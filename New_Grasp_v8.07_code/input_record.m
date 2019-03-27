@@ -16,12 +16,12 @@ phioffset =0;
         
         
         case 'Heidi omega 175mT'
-            input_index = 2; %data location (number)
-            output_index = 2; %where to put result
-            eta0 = 0.095;  %rocking width for spot in degrees
-            spot = [37 59];  %Spot coordinates
-            sanoffset = -90;  %san misalignment
-            phioffset =0;  %phi misalignment
+            input_index = 1; %data location (number)
+            output_index = 1; %where to put result
+            eta0 = 0.092;  %rocking width for spot in degrees
+            spot = [91 59];  %Spot coordinates
+            sanoffset = -89.9;  %san misalignment
+            phioffset =0.04;  %phi misalignment
             rock_type = 'san';
         
         case 'PdBi2 10 deg. off'
