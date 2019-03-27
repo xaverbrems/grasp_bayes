@@ -96,7 +96,7 @@ classdef Bayesian_Rock_new
             %initialise destination arrays
             obj.rocking_data.data = zeros([pixels frames]);
             obj.rocking_data.errors = zeros([pixels frames]);
-            obj.rocking_data.params = zeros(128,frames);
+            obj.rocking_data.params = cell(frames);
             obj.rocking_data.qmatrix = zeros([pixels 21]); %12/07/16 updated for graspv7.11
             
             j=1;
@@ -106,7 +106,7 @@ classdef Bayesian_Rock_new
                 corrected_data.error1(corrected_data.mask1~=1)=NaN;  %set masked points to NaN
                 obj.rocking_data.data(:,:,i) = corrected_data.data1;
                 obj.rocking_data.errors(:,:,i) = corrected_data.error1;
-                obj.rocking_data.params(:,i) = corrected_data.params1(:);
+                obj.rocking_data.params{i} = corrected_data.params1;
                 obj.rocking_data.qmatrix = obj.rocking_data.qmatrix + corrected_data.qmatrix1;
             end
             obj.rocking_data.qmatrix = obj.rocking_data.qmatrix./frames;  %average qmatrix (main difference is in wavelength)
@@ -129,29 +129,38 @@ classdef Bayesian_Rock_new
                 obj.axes = [-1 0; 0 -1]
             elseif strcmp(grasp_env.inst,'HZB_V4')
                 obj.axes = [1 0; 0 -1]
-            elseif strcmp(grasp_env.inst,'FRM2_SANS1')
+            elseif strcmp(grasp_env.inst,'FRM2_SANS_I')
                 obj.axes = [-1 0; 0 -1]
             end
-            if strcmp(grasp_env.inst,'HZB_V4')
-                sanparam = inst_params.vectors.san;   %%%to update for grasp 8.07
-                phiparam = inst_params.vectors.chi;
-            elseif strcmp(grasp_env.inst,'FRM2_SANS1')
-                sanparam = inst_params.vectors.omega_2b;
-                phiparam = inst_params.vectors.chi_2b;
-            else
-                sanparam = inst_params.vectors.san;
-                phiparam = inst_params.vectors.phi;
-            end
-            obj.san = pi/180.*(obj.axes(1,1).*obj.rocking_data.params(sanparam,:)...%%%to update for grasp 8.07
-                +obj.axes(1,2).*obj.rocking_data.params(phiparam,:));
+            %this version doesn't adapt to different angles san, phi, chi
+            %etc --> need to check
+%             if strcmp(grasp_env.inst,'HZB_V4')
+%                 sanparam = inst_params.vectors.san;   %%%to update for grasp 8.07
+%                 phiparam = inst_params.vectors.chi;
+%             elseif strcmp(grasp_env.inst,'FRM2_SANS_I')
+%                 sanparam = inst_params.vectors.omega_2b;
+%                 phiparam = inst_params.vectors.chi_2b;
+%             else
+%                 sanparam = inst_params.vectors.san;
+%                 phiparam = inst_params.vectors.phi;
+%             end
             
-            obj.phi = pi/180.*(obj.axes(2,1).*obj.rocking_data.params(sanparam,:)...
-                +obj.axes(2,2).*obj.rocking_data.params(phiparam,:));
+            % convert the cell array into normal array to extract san and phi
+           
+            obj_params_temp = obj.rocking_data.params(:,1) % (frames x 1) cell array with struct param in it
+            san_temp = cell2mat(cellfun(@(s)s.san,obj_params_temp,'uni',0)) %extract san into a normal array
+            phi_temp = cell2mat(cellfun(@(s)s.phi,obj_params_temp,'uni',0)) %extract phi into a normal array
+            
+            obj.san = pi/180.*(obj.axes(1,1).*san_temp...%%%to update for grasp 8.07
+                +obj.axes(1,2).*phi_temp);
+            
+            obj.phi = pi/180.*(obj.axes(2,1).*san_temp...
+                +obj.axes(2,2).*phi_temp);
             
             obj.max = max(max(max(obj.rocking_data.data.*repmat(corrected_data.mask1, [1 1 depth])))); %find maximum spot intensity
             obj.pixelmax = max(obj.rocking_data.data.*repmat(corrected_data.mask1, [1 1 depth]),[],3);
             %set up Ewald sphere
-            lambda = obj.rocking_data.params(inst_params.vectors.wav);%%%to update for grasp 8.07
+            lambda = obj.rocking_data.params{1,1}.wav;%%%to update for grasp 8.14 only one single lambda value --> take from first scan
             k = (2*pi)/lambda;
             obj.ewald = k-(k^2-obj.modq.^2).^0.5;
             
