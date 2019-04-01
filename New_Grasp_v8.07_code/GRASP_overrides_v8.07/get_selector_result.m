@@ -21,7 +21,8 @@ function foreimage = get_selector_result
 global status_flags
 global inst_params
 global grasp_env
-%global displayimage
+%global displayimage %currently the variable displayimage is unused in this
+%function
 
 %Begin the data treatment history
 history = {[grasp_env.grasp_name ' V.' grasp_env.grasp_version '    Instrument:  ' grasp_env.inst]};
