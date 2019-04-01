@@ -20,7 +20,7 @@ intensity_sd_multiplier =1; %scales default intensity s.d.
 nonsensefactor = 1;  %mask unmeasured points, low value is strict, 1 is no masking.
 shape = 'l'; %'l' Lorentzian, 'g' Gaussian
 norm = 'a'; %'h' or 'a' for for height or area normalised scaling factors
-inputs = {'Heidi omega 175mT'} %Cell array for multiple measurments
+inputs = {'Hazuki'} %Cell array for multiple measurments
 informative_prior = 0; %use previous posterior for prior
 pixel_prior = 0; % uses individual pixel errors for prior.
 
@@ -41,7 +41,7 @@ for i = 1:length(inputs)
     fit=1;  %fit fwhm and/or offsets. 
     fixed = [0 0 0];  %for fit: fixed = 1: [rocking_width sanoffset phioffset].  Can be set individually below.
     calcerrors = 1; %calculate errors on fit if not provided (i.e. no optimisation toolbox - takes extra time)
-    masktype = 'sectors';% only use sectors/sector boxes for fit, recommended. Syntax {0,'sectors' or 'sector_boxes'}
+    masktype = 'sector_boxes';% only use sectors/sector boxes for fit, recommended. Syntax {0,'sectors' or 'sector_boxes'}
     fitmethod = 'check'; %'check','fminsearch','fminlbfgs','fminunc','minFunc'; 'check' uses 'fminunc' if available, otherwise 'minFunc'
     sanoffset = 0;
     phioffset = 0;%n.b. fminunc is best, but needs optimization toolbox
@@ -84,12 +84,13 @@ for i = 1:length(inputs)
         A.prior.phioffset.sd = 10*pi/180;
         
         % Calculate prior sd from maximum spot intensity
+        A_params_temp = A.rocking_data.params(:,1)
         if strcmp(status_flags.normalization.status,'none') %i.e. abs counts
             mon=1; stmon=1;
         elseif strcmp(status_flags.normalization.status,'mon') %i.e. normalise data to standard monitor
-            divider = A.rocking_data.params(inst_params.vectors.monitor); divider_standard = status_flags.normalization.standard_monitor;
+            divider = cell2mat(cellfun(@(s)s.monitor,A_params_temp,'uni',0)); divider_standard = status_flags.normalization.standard_monitor;
         elseif strcmp(status_flags.normalization.status,'mon2') %i.e. normalise data to standard monitor
-            divider = A.rocking_data.params(inst_params.vectors.monitor2); divider_standard = status_flags.normalization.standard_monitor;        
+            divider = cell2mat(cellfun(@(s)s.monitor2,A_params_temp,'uni',0)); divider_standard = status_flags.normalization.standard_monitor;        
         end
         if pixel_prior
             priormethod = 'pixelmax'
