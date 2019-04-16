@@ -14,11 +14,21 @@ phioffset =0;
         
   
         
+        case 'Hazuki'
+            input_index = 1; %data location (number)
+            output_index = 1; %where to put result
+            eta0 = 0.28;  %rocking width for spot in degrees
+            spot = [80 80];  %Spot coordinates
+            sanoffset = -0.2;  %san misalignment
+            phioffset = 0.0;  %phi misalignment
+            rock_type = 'san';
+        
+
         
         case 'Heidi omega 175mT'
             input_index = 1; %data location (number)
             output_index = 1; %where to put result
-            eta0 = 0.092;  %rocking width for spot in degrees
+            eta0 = 0.09;  %rocking width for spot in degrees
             spot = [91 59];  %Spot coordinates
             sanoffset = -89.9;  %san misalignment
             phioffset =0.04;  %phi misalignment
