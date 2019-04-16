@@ -3,6 +3,7 @@ bayes_root = pwd;
 
 cd '../../Grasp_v814/grasp_m_barebones'
 
+grasp_ini;
 grasp_startup;
 disp('Adding override paths for Bayesian stuff');
 %
