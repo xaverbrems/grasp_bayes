@@ -9,8 +9,48 @@
 
 global inst_params
 global status_flags
+global grasp_handles
 status_flags.command_window.display_params=0;
 status_flags.display.refresh = 0;
+
+% check whether GUI bayes window is open and take bayes_input params from
+% there
+
+if ishandle(grasp_handles.window_modules.bayes.window)
+    
+    disp('GUI bayes window is open: Data taken from GUI')
+    reset = status_flags.user_modules.bayes.reset % reads in data again - set to 1 if you have new data or have modified code, 0 if you are using same data again.
+    input_index = status_flags.user_modules.bayes.input_index ; %data location  %nb. will be overwritten if set below
+    output_index = status_flags.user_modules.bayes.output_index; %output location
+    calc_cumulative = status_flags.user_modules.bayes.calc_cumulative;  %show cumulative results
+    intensity_sd_multiplier = status_flags.user_modules.bayes.intensity_sd_multiplier; %scales default intensity s.d.
+    nonsensefactor = status_flags.user_modules.bayes.nonsensefactor;  %mask unmeasured points, low value is strict, 1 is no masking.
+    shape = status_flags.user_modules.bayes.shape; %'l' Lorentzian, 'g' Gaussian
+    norm = status_flags.user_modules.bayes.norm; %'h' or 'a' for for height or area normalised scaling factors
+    inputs = {strcat('GUI: ', status_flags.user_modules.bayes.input_name)}; %Cell array for multiple measurments
+    informative_prior = status_flags.user_modules.bayes.informative_prior; %use previous posterior for prior
+    pixel_prior = status_flags.user_modules.bayes.pixel_prior ; % uses individual pixel errors for prior.
+    masktype = status_flags.user_modules.bayes.boxing_type;% only use sectors/sector boxes for fit, recommended. Syntax {0,'sectors' or 'sector_boxes'}
+    sanoffset = status_flags.user_modules.bayes.sanoffset;
+    phioffset = status_flags.user_modules.bayes.phioffset;%n.b. fminunc is best, but needs optimization toolbox
+    spot = [status_flags.user_modules.bayes.spot_x status_flags.user_modules.bayes.spot_y];
+    eta0 = status_flags.user_modules.bayes.eta0;
+    rock_type = status_flags.user_modules.bayes.rock_type;
+    
+    
+    if strcmp(shape,'l')
+     shape = 'lorentz'
+    else
+	   shape = 'gauss'
+    end
+    A.shape = [shape norm]
+    
+    fit=1;  %fit fwhm and/or offsets. 
+    fixed = [0 0 0];  %for fit: fixed = 1: [rocking_width sanoffset phioffset].  Can be set individually below.
+    calcerrors = 1; %calculate errors on fit if not provided (i.e. no optimisation toolbox - takes extra time)
+    fitmethod = 'check'; %'check','fminsearch','fminlbfgs','fminunc','minFunc'; 'check' uses 'fminunc' if available, otherwise 'minFunc'
+else
+
 
 reset = 1 % reads in data again - set to 1 if you have new data or have modified code, 0 if you are using same data again.
 input_index = 1; %data location  %nb. will be overwritten if set below
@@ -18,9 +58,9 @@ output_index = 1; %output location
 calc_cumulative = 1;  %show cumulative results
 intensity_sd_multiplier =1; %scales default intensity s.d.
 nonsensefactor = 1;  %mask unmeasured points, low value is strict, 1 is no masking.
-shape = 'l'; %'l' Lorentzian, 'g' Gaussian
+shape = 'g'; %'l' Lorentzian, 'g' Gaussian
 norm = 'a'; %'h' or 'a' for for height or area normalised scaling factors
-inputs = {'Hazuki'} %Cell array for multiple measurments
+inputs = {'Heidi omega 175mT'} %Cell array for multiple measurments
 informative_prior = 0; %use previous posterior for prior
 pixel_prior = 0; % uses individual pixel errors for prior.
 
@@ -31,26 +71,31 @@ pixel_prior = 0; % uses individual pixel errors for prior.
     end
     A.shape = [shape norm]
 
+end
 
 for i = 1:length(inputs)
     
     
-    %general options set below, can be overridden for each input (e.g. to
-    %fix sanoffset and phioffset after first fit).
-    %% set fitting options
-    fit=1;  %fit fwhm and/or offsets. 
-    fixed = [0 0 0];  %for fit: fixed = 1: [rocking_width sanoffset phioffset].  Can be set individually below.
-    calcerrors = 1; %calculate errors on fit if not provided (i.e. no optimisation toolbox - takes extra time)
-    masktype = 'sector_boxes';% only use sectors/sector boxes for fit, recommended. Syntax {0,'sectors' or 'sector_boxes'}
-    fitmethod = 'check'; %'check','fminsearch','fminlbfgs','fminunc','minFunc'; 'check' uses 'fminunc' if available, otherwise 'minFunc'
-    sanoffset = 0;
-    phioffset = 0;%n.b. fminunc is best, but needs optimization toolbox
-    %fminlbfgs sometimes causes trouble with 3 free params if you are
-    %already nearly at the right answer.
+    %first check whether GUI is active
+    if ~ishandle(grasp_handles.window_modules.bayes.window)
+        %general options set below, can be overridden for each input (e.g. to
+        %fix sanoffset and phioffset after first fit).
+        %% set fitting options
+        fit=1;  %fit fwhm and/or offsets. 
+        fixed = [0 0 0];  %for fit: fixed = 1: [rocking_width sanoffset phioffset].  Can be set individually below.
+        calcerrors = 1; %calculate errors on fit if not provided (i.e. no optimisation toolbox - takes extra time)
+        masktype = 0;% only use sectors/sector boxes for fit, recommended. Syntax {0,'sectors' or 'sector_boxes'}
+        fitmethod = 'check'; %'check','fminsearch','fminlbfgs','fminunc','minFunc'; 'check' uses 'fminunc' if available, otherwise 'minFunc'
+        sanoffset = 0;
+        phioffset = 0;%n.b. fminunc is best, but needs optimization toolbox
+        %fminlbfgs sometimes causes trouble with 3 free params if you are
+        %already nearly at the right answer.
     
-    %% keep record of previous data in 'input_record.m'.
+        %% keep record of previous data in 'input_record.m'.
     
-    [input_index, output_index, eta0, spot, rock_type, sanoffset, phioffset] = input_record(inputs{i})
+        [input_index, output_index, eta0, spot, rock_type, sanoffset, phioffset] = input_record(inputs{i})
+        
+    end
 
     %% set up object
     if exist('A') && informative_prior
@@ -162,6 +207,7 @@ for i = 1:length(inputs)
     
     informative_prior = 1; %use previous posterior for prior
 end
+
 %% hide unrocked regions
 A = hidenonsense(A,nonsensefactor,0);
 %A.posterior.intensity.mean = A.posterior.intensity.mean.*exp(-64*(A.posterior.intensity.sd./A.prior.intensity.sd).^2)
