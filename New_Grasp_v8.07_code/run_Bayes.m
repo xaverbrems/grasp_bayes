@@ -13,10 +13,24 @@ global grasp_handles
 status_flags.command_window.display_params=0;
 status_flags.display.refresh = 0;
 
+
+
+% check whether the bayes window has been opened at least once, otherwise
+% the grasp_handles.window_modules.bayes.window exists, but is an logical
+% array and ishandle doesn't work
+
+if (ishandle(grasp_handles.window_modules.bayes.window) == 1)
+    GUI = 1
+elseif (ishandle(grasp_handles.window_modules.bayes.window) == 0)
+    GUI = 0
+else
+    GUI = 0
+end
+
 % check whether GUI bayes window is open and take bayes_input params from
 % there
 
-if ishandle(grasp_handles.window_modules.bayes.window)
+if GUI
     
     disp('GUI bayes window is open: Data taken from GUI')
     reset = status_flags.user_modules.bayes.reset % reads in data again - set to 1 if you have new data or have modified code, 0 if you are using same data again.
@@ -77,7 +91,7 @@ for i = 1:length(inputs)
     
     
     %first check whether GUI is active
-    if ~ishandle(grasp_handles.window_modules.bayes.window)
+    if ~GUI
         %general options set below, can be overridden for each input (e.g. to
         %fix sanoffset and phioffset after first fit).
         %% set fitting options
