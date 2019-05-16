@@ -1,7 +1,7 @@
 
 bayes_root = pwd; 
 
-cd '../../Grasp_v814/grasp_m_barebones'
+cd '../../grasp_m_barebones'
 
 grasp_ini;
 grasp_startup;
