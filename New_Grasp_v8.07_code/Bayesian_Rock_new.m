@@ -132,6 +132,7 @@ classdef Bayesian_Rock_new
             elseif strcmp(grasp_env.inst,'FRM2_SANS_I')
                 obj.axes = [-1 0; 0 -1]
             end
+            
             %this version doesn't adapt to different angles san, phi, chi
             %etc --> need to check
 %             if strcmp(grasp_env.inst,'HZB_V4')
@@ -431,7 +432,7 @@ classdef Bayesian_Rock_new
             fwhm = params(1);
             sanoffset = params(2);
             phioffset = params(3);
-            
+
             if length(obj.prior.intensity.mean)==1
                 intensityparams =...
                     [obj.prior.intensity.mean;...
@@ -466,7 +467,7 @@ classdef Bayesian_Rock_new
                 .*(priorfactor./obj.prior.intensity.sd).^2;
             LogPosterior = sum(likelihood(~isnan(likelihood)))+sum(priorintensity(~isnan(priorintensity)))...           %remove NaNs
                 +0.5*(sanoffset-obj.prior.sanoffset.mean)^2/obj.prior.sanoffset.sd ...
-                +0.5*(sanoffset-obj.prior.phioffset.mean)^2/obj.prior.phioffset.sd ...
+                +0.5*(phioffset-obj.prior.phioffset.mean)^2/obj.prior.phioffset.sd ...
                 +0.5*(fwhm-obj.prior.rocking_fwhm.mean).^2./obj.prior.rocking_fwhm.sd.^2;
             %-log(fwhm);  %use Jeffreys prior for fwhm.
         end
