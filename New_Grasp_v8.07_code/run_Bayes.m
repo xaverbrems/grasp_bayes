@@ -75,7 +75,7 @@ nonsensefactor = 1;  %mask unmeasured points, low value is strict, 1 is no maski
 shape = 'g'; %'l' Lorentzian, 'g' Gaussian
 norm = 'a'; %'h' or 'a' for for height or area normalised scaling factors
 inputs = {'Heidi omega 175mT'} %Cell array for multiple measurments
-informative_prior = 0; %use previous posterior for prior
+informative_prior = 0 %use previous posterior for prior
 pixel_prior = 0; % uses individual pixel errors for prior.
 
     if strcmp(shape,'l')
@@ -216,7 +216,22 @@ for i = 1:length(inputs)
         fprintf(f,'%g\t',A.posterior.phioffset.mean*180/pi);
         fprintf(f,'%g\n',A.posterior.phioffset.sd*180/pi);
         fclose(f);
+        
+        if GUI
+            status_flags.user_modules.bayes.results.sanoffset = A.posterior.sanoffset.mean*180/pi
+            status_flags.user_modules.bayes.results.sanoffset_err = A.posterior.sanoffset.sd*180/pi
+            status_flags.user_modules.bayes.results.phioffset = A.posterior.phioffset.mean*180/pi
+            status_flags.user_modules.bayes.results.phioffset_err = A.posterior.phioffset.sd*180/pi
+            status_flags.user_modules.bayes.results.eta_0 = eta0_post
+            status_flags.user_modules.bayes.results.eta_0_err = eta0_post_err
+            status_flags.user_modules.bayes.results.fwhm = A.posterior.rocking_fwhm.mean
+            status_flags.user_modules.bayes.results.fwhm_err = A.posterior.rocking_fwhm.sd
+            bayes_callbacks('display_fit_results')
+        end
+        
     end
+
+    
     updateGrasp(A);
     
     informative_prior = 1; %use previous posterior for prior
