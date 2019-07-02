@@ -110,7 +110,30 @@ for i = 1:length(inputs)
         [input_index, output_index, eta0, spot, rock_type, sanoffset, phioffset] = input_record(inputs{i})
         
     end
-
+    
+    
+    
+ %check whether masktype is active, need to fix this
+    if strcmp(masktype,'sectors')
+        if (ishandle(grasp_handles.window_modules.sector.window) == 1)
+            continue
+        else
+            display('Sector window is not active: Please open the sector window and select the area where the fit should be performed')
+            beep
+            return
+        end
+    end
+    if strcmp(masktype, 'sector_boxes')
+        if (ishandle(grasp_handles.window_modules.sector_box.window) == 1)
+            continue
+        else
+            display('Sector_boxes window is not active: Please open the sector_boxes window and select the area where the fit should be performed')
+            beep
+            return
+        end
+    end
+        
+    
     %% set up object
     if exist('A') && informative_prior
         posterior = A.posterior;
