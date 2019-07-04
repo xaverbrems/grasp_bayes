@@ -14,7 +14,6 @@ status_flags.command_window.display_params=0;
 status_flags.display.refresh = 0;
 
 
-
 % check whether the bayes window has been opened at least once, otherwise
 % the grasp_handles.window_modules.bayes.window exists, but is an logical
 % array and ishandle doesn't work
@@ -113,7 +112,7 @@ for i = 1:length(inputs)
     
     
     
- %check whether masktype is active, need to fix this
+ %check whether masktype is active
     if strcmp(masktype,'sectors')
         if (ishandle(grasp_handles.window_modules.sector.window) == 1)
             continue
@@ -254,7 +253,7 @@ for i = 1:length(inputs)
         
     end
 
-    
+
     updateGrasp(A);
     
     informative_prior = 1; %use previous posterior for prior
@@ -265,7 +264,19 @@ A = hidenonsense(A,nonsensefactor,0);
 %A.posterior.intensity.mean = A.posterior.intensity.mean.*exp(-64*(A.posterior.intensity.sd./A.prior.intensity.sd).^2)
 %A.posterior.intensity.mean = A.posterior.intensity.mean.*exp(-2*(A.posterior.intensity.sd./A.posterior.intensity.mean).^2)
 
+
+
+%% update status_flags.user_modules.bayes.normalization so the correct z label is displayed. This is used in grasp_update
+
+status_flags.user_modules.bayes.normalization = status_flags.normalization.status
+
+if strcmp(status_flags.normalization.status,'parameter')
+    status_flags.user_modules.bayes.normalization = status_flags.normalization.param
+end
+
+
 %% update Grasp display and show results in degrees
 status_flags.command_window.display_params=1;
 status_flags.display.refresh = 1;
 updateGrasp(A);
+
