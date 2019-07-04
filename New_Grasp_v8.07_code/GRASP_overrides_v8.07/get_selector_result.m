@@ -937,7 +937,7 @@ elseif (status_flags.selector.fw == 22 || status_flags.selector.fw == 23)
 
 %% ATH added section    
 elseif status_flags.selector.fw == 41 || status_flags.selector.fw == 42 || status_flags.selector.fw == 43  
- %***** Show bayesian results with no normalisation etc. *****
+ %***** Show bayesian results with no normalisation etc. This also means that for Bayesian data normalization can't be changed after it has been calculated*****
     
     [foreimage] = retrieve_data('fore');
    %***** Q Calculations *****
