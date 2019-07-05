@@ -115,7 +115,7 @@ for i = 1:length(inputs)
  %check whether masktype is active
     if strcmp(masktype,'sectors')
         if (ishandle(grasp_handles.window_modules.sector.window) == 1)
-            continue
+           % do nothing and continue 
         else
             display('Sector window is not active: Please open the sector window and select the area where the fit should be performed')
             beep
@@ -124,7 +124,7 @@ for i = 1:length(inputs)
     end
     if strcmp(masktype, 'sector_boxes')
         if (ishandle(grasp_handles.window_modules.sector_box.window) == 1)
-            continue
+            %do nothing and continue
         else
             display('Sector_boxes window is not active: Please open the sector_boxes window and select the area where the fit should be performed')
             beep
@@ -259,11 +259,21 @@ for i = 1:length(inputs)
     informative_prior = 1; %use previous posterior for prior
 end
 
+
+
+
 %% hide unrocked regions
 A = hidenonsense(A,nonsensefactor,0);
 %A.posterior.intensity.mean = A.posterior.intensity.mean.*exp(-64*(A.posterior.intensity.sd./A.prior.intensity.sd).^2)
 %A.posterior.intensity.mean = A.posterior.intensity.mean.*exp(-2*(A.posterior.intensity.sd./A.posterior.intensity.mean).^2)
 
+%% check whether integrated intensity should be displayed in counts/angle or counts/angstrom
+if status_flags.user_modules.bayes.qztodegrees == 1
+    A = qztodegrees(A);
+    status_flags.user_modules.bayes.qztodegrees_used = 1; % needed to display the correct z label
+else
+    status_flags.user_modules.bayes.qztodegrees_used = 0; % needed to display the correct z label
+end
 
 
 %% update status_flags.user_modules.bayes.normalization so the correct z label is displayed. This is used in grasp_update

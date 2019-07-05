@@ -11,7 +11,9 @@ classdef Bayesian_Rock_new
         %posterior = Bayes_Rocking_Params
         prior
         posterior
+        posterior_degrees %added so integrated intensity can also be displayed in counts/degrees
         cumulative = []
+        cumulative_degrees = [] %added so cumujlative integrated intensity can also be displayed in counts/degrees
         weights
         shape = 'lorentza' %'lorentza','lorentzh','gaussa','gaussh'
         factor = 1
@@ -420,6 +422,22 @@ classdef Bayesian_Rock_new
             end
             obj.weights(mask) = obj.weights(mask)./weights_denom3d(mask);
             
+            %calculate the posterior mean and sd in counts/degrees by just multiplying
+            %it by (180/(qx^2 + qy^2)^(1/2)
+            obj.posterior_degrees.intensity.mean = obj.posterior.intensity.mean .*(180./(obj.modq*pi));
+            obj.posterior_degrees.intensity.sd = obj.posterior.intensity.sd .*(180./(obj.modq*pi));
+            
+            % do the same for the cumulative
+            if calc_cumulative
+                for i = obj.start_depth:obj.step:obj.end_depth
+                obj.cumulative_degrees.mean(:,:,i) = obj.cumulative.mean(:,:,i).*(180./(obj.modq*pi));
+                obj.cumulative_degrees.sd(:,:,i) = obj.cumulative.sd(:,:,i).*(180./(obj.modq*pi));
+                end
+            end
+            %if status_flags.user_modules.bayes.qztodegrees == 1
+            %obj.posterior.intensity.mean
+            %end
+            
         end %calcIntensities
         %%      LogPosterior
         function LogPosterior = LogPosterior(obj,params,use_mask)
@@ -560,6 +578,9 @@ classdef Bayesian_Rock_new
                 obj.posterior.phioffset.sd=alldiag(3)^0.5*scalefactor(3);
             end
         end
+        
+
+
         %% hidecrap
         function obj = hidenonsense(obj,nonsensefactor,substvalue)
             global status_flags
@@ -576,10 +597,25 @@ classdef Bayesian_Rock_new
             %                 rawmax = obj.max*mon/stmon;
             %                 priorsd = 0.5*pi*obj.prior.rocking_fwhm.mean*(0.5+rawmax-0.5*sqrt(1+4*rawmax))*stmon/mon;
             %             end
+            %obj.posterior.intensity.mean = obj.posterior_degrees.intensity.mean
             obj.posterior.intensity.mean(obj.posterior.intensity.sd > obj.prior.intensity.sd.*nonsensefactor) = substvalue;
             obj.posterior.intensity.mean(~obj.mask)=0;
+            %do the same for the degree posterior
+            obj.posterior_degrees.intensity.mean(obj.posterior.intensity.sd > obj.prior.intensity.sd.*nonsensefactor) = substvalue;
+            obj.posterior_degrees.mean(~obj.mask)=0;
             
         end
+        
+        
+        %% qztodegrees
+        function obj = qztodegrees(obj)
+            %replaces the intensities (both integrated and cumulative) and
+            %its errors with the corresponding intensities in
+            %counts/degree
+            obj.posterior.intensity = obj.posterior_degrees.intensity
+            obj.cumulative = obj.cumulative_degrees
+        end
+        
         %% updateGrasp
         function updateGrasp(obj)
             global grasp_data
