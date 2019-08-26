@@ -11,9 +11,9 @@ classdef Bayesian_Rock_new
         %posterior = Bayes_Rocking_Params
         prior
         posterior
-        posterior_degrees %added so integrated intensity can also be displayed in counts/degrees
+        posterior_degrees %added so integrated intensity can also be displayed in counts * degrees
         cumulative = []
-        cumulative_degrees = [] %added so cumujlative integrated intensity can also be displayed in counts/degrees
+        cumulative_degrees = [] %added so cumujlative integrated intensity can also be displayed in counts * degrees
         weights
         shape = 'lorentza' %'lorentza','lorentzh','gaussa','gaussh'
         factor = 1
@@ -611,7 +611,7 @@ classdef Bayesian_Rock_new
         function obj = qztodegrees(obj)
             %replaces the intensities (both integrated and cumulative) and
             %its errors with the corresponding intensities in
-            %counts/degree
+            %counts * degree
             obj.posterior.intensity = obj.posterior_degrees.intensity
             obj.cumulative = obj.cumulative_degrees
         end
