@@ -23,7 +23,25 @@ phioffset =0;
             phioffset = 0.0;  %phi misalignment
             rock_type = 'san';
         
-
+        
+        case 'ILL_test_san_rock'
+            input_index = 2; %data location (number)
+            output_index = 2; %where to put result
+            eta0 = 2;  %rocking width for spot in degrees
+            spot = [172 58];  %Spot coordinates
+            sanoffset = 0;  %san misalignment
+            phioffset = 0;  %phi misalignment
+            rock_type = 'san';
+            
+        case 'ILL_test_phi_rock'
+            input_index = 1; %data location (number)
+            output_index = 1; %where to put result
+            eta0 = 2;  %rocking width for spot in degrees
+            spot = [134 82];  %Spot coordinates
+            sanoffset = 0;  %san misalignment
+            phioffset = 0;  %phi misalignment
+            rock_type = 'phi';
+            
         
         case 'Heidi omega 175mT'
             input_index = 1; %data location (number)

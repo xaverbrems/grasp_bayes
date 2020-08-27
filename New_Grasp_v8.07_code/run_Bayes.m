@@ -73,7 +73,7 @@ intensity_sd_multiplier =1; %scales default intensity s.d.
 nonsensefactor = 1;  %mask unmeasured points, low value is strict, 1 is no masking.
 shape = 'g'; %'l' Lorentzian, 'g' Gaussian
 norm = 'a'; %'h' or 'a' for for height or area normalised scaling factors
-inputs = {'Heidi omega 175mT'} %Cell array for multiple measurments
+inputs = {'ILL_test_san_rock','ILL_test_phi_rock'} %Cell array for multiple measurments
 informative_prior = 0 %use previous posterior for prior
 pixel_prior = 0; % uses individual pixel errors for prior.
 

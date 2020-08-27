@@ -212,16 +212,20 @@ classdef Bayesian_Rock_new
             end
             
             %single depth
+            % adapt the data format so it can be processed with
+            % place_data() which has the params in a struct which is placed in  the first cell of an
+            % array have to loop thriough all detectors
+            
             template=retrieve_data([1 input_index 2]);
-            %store params temporary into variable
-            template_params_temp = template.params1;
-            template.params1 = cell(1);
-            template.params1{1,1} = template_params_temp;
-            template.data1 = zeros(size(template.data1));
+                
             template.n_frames = 1;
             template.file_type = 'single frame';
             dets = inst_params.detectors;
             for det = 1:dets
+                template_params_temp = template.(['params' num2str(det)]);
+                template.(['params' num2str(det)]) = cell(1);
+                template.(['params' num2str(det)]){1,1} = template_params_temp;
+                %template.data1 = zeros(size(template.data1));
                 template.(['data' num2str(det)])=zeros(size(template.(['data' num2str(det)])));
             end
             place_data(template, final_result_type,final_result_index(2),1); %updated ATH for v7.11
@@ -233,12 +237,14 @@ classdef Bayesian_Rock_new
             %multiple depths
             if calc_cumulative % intermediate data
                 for i = start_depth:step:end_depth
+                    
                     template=retrieve_data([1 input_index i+1]);
-                    %store params temporary into variable
-                    template_params_temp = template.params1;
-                    template.params1 = cell(1);
-                    template.params1{1,1} = template_params_temp;
                     for det = 1:dets
+                        %store params temporary into variable
+                        template_params_temp = template.(['params' num2str(det)]);
+                        template.(['params' num2str(det)]) = cell(1);
+                        template.(['params' num2str(det)]){1,1} = template_params_temp;
+                    
                         template.(['data' num2str(det)])=zeros(size(template.(['data' num2str(det)])));
                     end
                     template.n_frames=1;
