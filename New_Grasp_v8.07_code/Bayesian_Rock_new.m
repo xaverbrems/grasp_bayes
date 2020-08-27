@@ -456,8 +456,10 @@ classdef Bayesian_Rock_new
             fwhm = params(1);
             sanoffset = params(2);
             phioffset = params(3);
-
-            if length(obj.prior.intensity.mean)==1
+            % change from mean to sd, since we have mean set to zero and
+            % shape is 0 --> have a shape mismatch with sd in case of pixel
+            % prior which has shape of detector pixels
+            if length(obj.prior.intensity.sd)==1
                 intensityparams =...
                     [obj.prior.intensity.mean;...
                     obj.prior.intensity.sd;...

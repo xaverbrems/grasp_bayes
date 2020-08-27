@@ -73,9 +73,9 @@ intensity_sd_multiplier =1; %scales default intensity s.d.
 nonsensefactor = 1;  %mask unmeasured points, low value is strict, 1 is no masking.
 shape = 'g'; %'l' Lorentzian, 'g' Gaussian
 norm = 'a'; %'h' or 'a' for for height or area normalised scaling factors
-inputs = {'ILL_test_san_rock','ILL_test_phi_rock'} %Cell array for multiple measurments
+inputs = {'ILL_test_san_rock'} %Cell array for multiple measurments
 informative_prior = 0 %use previous posterior for prior
-pixel_prior = 0; % uses individual pixel errors for prior.
+pixel_prior = 1; % uses individual pixel errors for prior.
 
     if strcmp(shape,'l')
      shape = 'lorentz'
@@ -95,9 +95,9 @@ for i = 1:length(inputs)
         %fix sanoffset and phioffset after first fit).
         %% set fitting options
         fit=1;  %fit fwhm and/or offsets. 
-        fixed = [0 0 0];  %for fit: fixed = 1: [rocking_width sanoffset phioffset].  Can be set individually below.
+        fixed = [0 1 1];  %for fit: fixed = 1: [rocking_width sanoffset phioffset].  Can be set individually below.
         calcerrors = 1; %calculate errors on fit if not provided (i.e. no optimisation toolbox - takes extra time)
-        masktype = 0;% only use sectors/sector boxes for fit, recommended. Syntax {0,'sectors' or 'sector_boxes'}
+        masktype = 'sector_boxes';% only use sectors/sector boxes for fit, recommended. Syntax {0,'sectors' or 'sector_boxes'}
         fitmethod = 'check'; %'check','fminsearch','fminlbfgs','fminunc','minFunc'; 'check' uses 'fminunc' if available, otherwise 'minFunc'
         sanoffset = 0;
         phioffset = 0;%n.b. fminunc is best, but needs optimization toolbox
@@ -192,12 +192,21 @@ for i = 1:length(inputs)
     if fit
         A = fitParams(A, fixed,fitmethod,calcerrors);% no method = fminunc
         
-        optimalparams = ...
-             [A.prior.intensity.mean;...
-                 A.prior.intensity.sd;...
-                 A.posterior.rocking_fwhm.mean;...
-                 A.posterior.sanoffset.mean;...
-                 A.posterior.phioffset.mean;];
+        if size(A.prior.intensity.sd) == 1
+            optimalparams = ...
+                [A.prior.intensity.mean;...
+                    A.prior.intensity.sd;...
+                    A.posterior.rocking_fwhm.mean;...
+                    A.posterior.sanoffset.mean;...
+                    A.posterior.phioffset.mean;];
+        else
+            optimalparams = struct
+            optimalparams.intensity.mean = A.prior.intensity.mean;
+            optimalparams.intensity.sd = A.prior.intensity.sd;
+            optimalparams.rocking_fwhm.mean = A.posterior.rocking_fwhm.mean;
+            optimalparams.sanoffset.mean = A.posterior.sanoffset.mean;
+            optimalparams.phioffset.mean = A.posterior.phioffset.mean;
+        end
     else
         A.posterior.rocking_fwhm.mean = A.prior.rocking_fwhm.mean;  % if not fitting
         A.posterior.rocking_fwhm.sd = A.prior.rocking_fwhm.sd;  % if not fitting
